@@ -1,5 +1,6 @@
 const express = require("express");
 
+const secure = require("./secure");
 const response = require("../../../network/response");
 const controller = require("./index");
 
@@ -9,7 +10,7 @@ const router = express.Router();
 router.get("/", list);
 router.get("/:id", get);
 router.post("/", upsert);
-router.put("/", upsert);
+router.put("/", secure("update"), upsert);
 
 // Internal functions
 function list(req, res) {
@@ -24,8 +25,7 @@ function list(req, res) {
 }
 
 function get(req, res) {
-  controller
-    .get(req.params.id)
+  Controller.get(req.params.id)
     .then((user) => {
       response.success(req, res, user, 200);
     })
@@ -35,8 +35,7 @@ function get(req, res) {
 }
 
 function upsert(req, res) {
-  controller
-    .upsert(req.body)
+  controller.upsert(req.body)
     .then((user) => {
       response.success(req, res, user, 201);
     })
